@@ -1,5 +1,5 @@
 # Import our abstractions 
-include makefile.defs
+include ../../../makefile.defs
 
 name=coolapp
 

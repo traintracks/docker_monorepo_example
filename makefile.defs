@@ -1,6 +1,6 @@
 unexport DOCKER_HOST
 
-default: build 
+default: all 
 
 builder_dockerfile=${name}/builder.dockerfile
 mount=${PWD}/${docker_context}
