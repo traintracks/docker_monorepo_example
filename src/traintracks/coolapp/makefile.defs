@@ -1,0 +1,36 @@
+unexport DOCKER_HOST
+
+default: build 
+
+builder_dockerfile=${name}/builder.dockerfile
+mount=${PWD}/${docker_context}
+mount_output_dir=/mount/${name}/artifacts/
+
+# Builds the builder image
+builder:
+	tar -zcf - ${dependencies}  \
+		| docker build -t ${name}-builder -f ${builder_dockerfile} -
+
+# Jumps into the builder container
+it:
+	docker run -it  \
+		-v ${mount}:/mount \
+		${name}-builder bash
+
+# Executes build container and generate artifacts
+build:
+	docker run -it --rm \
+		-v ${mount}:/mount \
+		${name}-builder /bin/sh -c "rsync -auiv /mount/ ${container_src}/ && \
+			go get ./... && \
+			mkdir -p ${mount_output_dir} && \
+			cp ${container_artifacts}/* ${mount_output_dir}/"
+	echo "Generated artifacts to artifacts folder"
+
+runner:
+	docker build -t ${name} .
+
+run:
+	docker run -it ${name}
+
+all: build runner run

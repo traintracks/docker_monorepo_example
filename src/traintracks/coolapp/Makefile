@@ -1,21 +1,16 @@
-default: run 
+# Import our abstractions 
+include makefile.defs
 
-builder:
-	tar -zcf - ../  \
-		| docker build -t coolapp-builder -f coolapp/coolapp.builder.dockerfile -
+name=coolapp
 
-build:
-	docker run -it  \
-		-v ${PWD}/../:/mount \
-		coolapp-builder /bin/sh -c "rsync -auiv --filter=\":- .gitignore\" /mount/ /go/src/traintracks/ && \
-			go get ./... && \
-			mkdir -p /mount/coolapp/output && \
-			cp -v /go/bin/*  /mount/coolapp/output/"
+# The root of the docker context
+docker_context=..
 
-runner: build
-	docker build -t coolapp -f coolapp.dockerfile . 
+# Path to all dependencies seperated by space
+dependencies=${docker_context}/lib1 ${docker_context}/lib2 ${docker_context}/coolapp
 
-run: runner
-	docker run -it coolapp
+# Where the context goes in the container 
+container_src=/go/src/traintracks
 
-all: builder run
+# Where artifacts end up after build
+container_artifacts=/go/bin
