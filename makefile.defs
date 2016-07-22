@@ -22,7 +22,7 @@ build:
 	docker run -it --rm \
 		-v ${mount}:/mount \
 		${name}-builder /bin/sh -c "rsync -auiv /mount/ ${container_src}/ && \
-			go get ./... && \
+			${build_command} && \
 			mkdir -p ${mount_output_dir} && \
 			cp ${container_artifacts}/* ${mount_output_dir}/"
 	echo "Generated artifacts to artifacts folder"

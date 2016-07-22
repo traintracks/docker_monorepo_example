@@ -14,3 +14,6 @@ container_src=/go/src/traintracks
 
 # Where artifacts end up after build
 container_artifacts=/go/bin
+
+# Complete build command
+build_command=go get ./...
